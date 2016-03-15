@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import sys
+import logging
 
 from gsp import GSP
 from util import argmax_index
 
-class BBAgent:
+class PiratesBB:
     """Balanced bidding agent"""
     def __init__(self, id, value, budget):
         self.id = id
@@ -28,6 +29,8 @@ class BBAgent:
         """
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
+
+        #logging.debug(prev_round)
 
         clicks = prev_round.clicks
         def compute(s):
