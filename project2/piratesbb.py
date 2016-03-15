@@ -5,7 +5,7 @@ import sys
 from gsp import GSP
 from util import argmax_index
 
-class BBAgent:
+class PiratesBB:
     """Balanced bidding agent"""
     def __init__(self, id, value, budget):
         self.id = id
@@ -35,7 +35,7 @@ class BBAgent:
             if max == None:
                 max = 2 * min
             return (s, min, max)
-            
+
         info = map(compute, range(len(clicks)))
 #        sys.stdout.write("slot info: %s\n" % info)
         return info
@@ -52,7 +52,13 @@ class BBAgent:
         # TODO: Fill this in
         utilities = []   # Change this
 
-        
+        for j in range(len(clicks)):
+            other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
+            p_j = 0.75**(j-1)
+            v_i = self.value
+            t_j = sorted(other_bids)[-j]
+            utilities.append(p_j*(v_i-t_j))
+
         return utilities
 
     def target_slot(self, t, history, reserve):
@@ -82,8 +88,11 @@ class BBAgent:
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
 
         # TODO: Fill this in.
+        expected_utils = self.expected_utils
+        j_opt = values.index(max(expected_utils))
+        if
         bid = 0  # change this
-        
+
         return bid
 
     def __repr__(self):
