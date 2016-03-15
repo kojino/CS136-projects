@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import logging
 
 from gsp import GSP
 from util import argmax_index
@@ -49,15 +50,29 @@ class PiratesBB:
 
         returns a list of utilities per slot.
         """
-        # TODO: Fill this in
-        utilities = []   # Change this
+        
+        utilities = []
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
-        v_i = self.value
+
+        other_bids = [x[1] for x in other_bids]
+
+        logging.debug("Round: %s" % t)
+        logging.debug(prev_round.bids)
+        logging.debug("Original:")
+        logging.debug(other_bids)
+        logging.debug("Sorted:")
+        logging.debug(sorted(other_bids))
+
         for j in range(len(other_bids)): # Or other_bids - 1
             p_j = 0.75**(j-1)
-            t_j = sorted(other_bids)[-j]
-            utilities.append(p_j * (v_i - t_j[1]))
+            t_j = sorted(other_bids)[-(j+1)]
+            utilities.append(p_j * (self.value - t_j))
+
+        logging.debug("Utilities:")
+        logging.debug(utilities)
+        logging.debug("")
+
         return utilities
 
     def target_slot(self, t, history, reserve):
@@ -75,9 +90,11 @@ class PiratesBB:
     def bid(self, t, history, reserve):
         prev_round = history.round(t-1)
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
+        
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
         expected_utils = self.expected_utils(t, history, reserve)
+        
         v_i = self.value
         j_opt = expected_utils.index(max(expected_utils))
         t_j_opt = other_bids[j_opt]
