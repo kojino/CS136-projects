@@ -53,13 +53,11 @@ class PiratesBB:
         utilities = []   # Change this
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
-
         v_i = self.value
-        for j in range(len(clicks)):
+        for j in range(len(other_bids)): # Or other_bids - 1
             p_j = 0.75**(j-1)
             t_j = sorted(other_bids)[-j]
-            utilities.append(p_j*(v_i-t_j))
-
+            utilities.append(p_j * (v_i - t_j[1]))
         return utilities
 
     def target_slot(self, t, history, reserve):
@@ -75,33 +73,21 @@ class PiratesBB:
         return info[i]
 
     def bid(self, t, history, reserve):
-        # The Balanced bidding strategy (BB) is the strategy for a player j that, given
-        # bids b_{-j},
-        # - targets the slot s*_j which maximizes his utility, that is,
-        # s*_j = argmax_s {clicks_s (v_j - t_s(j))}.
-        # - chooses his bid b' for the next round so as to
-        # satisfy the following equation:
-        # clicks_{s*_j} (v_j - t_{s*_j}(j)) = clicks_{s*_j-1}(v_j - b')
-        # (p_x is the price/click in slot x)
-        # If s*_j is the top slot, bid the value v_j
-
         prev_round = history.round(t-1)
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
-
-        # TODO: Fill this in.
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
-        expected_utils = self.expected_utils
+        expected_utils = self.expected_utils(t, history, reserve)
         v_i = self.value
-        j_opt = values.index(max(expected_utils))
+        j_opt = expected_utils.index(max(expected_utils))
         t_j_opt = other_bids[j_opt]
-        if t_j_opt => v_i:
+        
+        if t_j_opt >= v_i:
             bid = v_i
-        elif j_opt > 1:
+        elif j_opt > 0:
             bid = v_i - 0.75(v_i - t_j_opt)
-        elif j_opt = 1:
+        elif j_opt == 0:
             bid = v_i
-
         return bid
 
     def __repr__(self):
