@@ -51,11 +51,12 @@ class PiratesBB:
         """
         # TODO: Fill this in
         utilities = []   # Change this
+        prev_round = history.round(t-1)
+        other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
 
+        v_i = self.value
         for j in range(len(clicks)):
-            other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
             p_j = 0.75**(j-1)
-            v_i = self.value
             t_j = sorted(other_bids)[-j]
             utilities.append(p_j*(v_i-t_j))
 
@@ -88,10 +89,18 @@ class PiratesBB:
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
 
         # TODO: Fill this in.
+        prev_round = history.round(t-1)
+        other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
         expected_utils = self.expected_utils
+        v_i = self.value
         j_opt = values.index(max(expected_utils))
-        if
-        bid = 0  # change this
+        t_j_opt = other_bids[j_opt]
+        if t_j_opt => v_i:
+            bid = v_i
+        elif j_opt > 1:
+            bid = v_i - 0.75(v_i - t_j_opt)
+        elif j_opt = 1:
+            bid = v_i
 
         return bid
 
