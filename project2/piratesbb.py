@@ -58,6 +58,7 @@ class PiratesBB:
         other_bids = [x[1] for x in other_bids]
 
         logging.debug("Round: %s" % t)
+        logging.debug("Has value of %s" % self.value)
         logging.debug(prev_round.bids)
         logging.debug("Original:")
         logging.debug(other_bids)
@@ -71,7 +72,6 @@ class PiratesBB:
 
         logging.debug("Utilities:")
         logging.debug(utilities)
-        logging.debug("")
 
         return utilities
 
@@ -88,8 +88,8 @@ class PiratesBB:
         return info[i]
 
     def bid(self, t, history, reserve):
-        prev_round = history.round(t-1)
-        (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
+        #prev_round = history.round(t-1)
+        #(slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
         
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
@@ -97,12 +97,14 @@ class PiratesBB:
         
         v_i = self.value
         j_opt = expected_utils.index(max(expected_utils))
-        t_j_opt = other_bids[j_opt]
-        
+        t_j_opt = (other_bids[j_opt])[1]
+        logging.debug("Choice. optimal position %s, optimal bid %s" % (j_opt,t_j_opt))
+        logging.debug("")
+
         if t_j_opt >= v_i:
             bid = v_i
         elif j_opt > 0:
-            bid = v_i - 0.75(v_i - t_j_opt)
+            bid = v_i - 0.75*(v_i - t_j_opt)
         elif j_opt == 0:
             bid = v_i
         return bid

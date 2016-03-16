@@ -16,6 +16,8 @@ import pprint
 import random
 import sys
 
+import csv
+
 from gsp import GSP
 from vcg import VCG
 from history import History
@@ -329,6 +331,14 @@ def main(args):
 
     av_value=range(0,n)
     total_spent = [0 for i in range(n)]
+    
+    """ Additional statistics to follow """
+    agents_spent_stats = [] ### For spending statistics information
+    agents_util_stats = [] ### For utility statistics
+    for i in range(n):
+        agents_spent_stats.append([])
+        agents_util_stats.append([])
+    """ ------------------------------- """
 
     ##  iters = no. of samples to take
     for i in range(options.iters):
@@ -355,7 +365,13 @@ def main(args):
             for id in range(n):
                 totals[id] += stats.total_utility(id)
                 total_spent[id] += history.agents_spent[id]
+                """ Additional stats ---------------- """
+                agents_spent_stats[id].append(history.agents_spent[id])
+                agents_util_stats[id].append(stats.total_utility(id))
+                """ --------------------------------- """
+
             total_rev += stats.total_revenue()
+
         total_revenues.append(total_rev / float(num_perms))
 
     ## total_spent = total amount of money spent by agents, for all iterations, all permutations, all rounds
@@ -374,6 +390,32 @@ def main(args):
     m = mean(total_revenues)
     std = stddev(total_revenues)
     logging.warning("Average daily revenue (stddev): $%.2f ($%.2f)" % (0.01 * m, 0.01*std))
+
+    logging.debug("agents_spent_stats:")
+    logging.debug(agents_spent_stats)
+    logging.debug("agents_util_stats:")
+    logging.debug(agents_util_stats)
+
+    """ Implementing output into csv """
+    with open('results.csv', 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=';',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['Agent #'] + 
+            ['Agent type'] + 
+            ['Average spent'] +
+            ['SD spent'] +
+            ['Average Utility'] +
+            ['SD Utility'])
+        for a in range(n):
+            spamwriter.writerow([a] + 
+                [agents_to_run[a]] +
+                [0.01*sum(agents_spent_stats[a])/N] +
+                [0.01*stddev(agents_spent_stats[a])] +
+                [0.01*sum(agents_util_stats[a])/N] +
+                [0.01*stddev(agents_util_stats[a])/N])
+        spamwriter.writerow([n] +
+            ['Seller'] +
+            [0.01 * m] + [0.01 * std] + [0] + [0])
 
 #print "config", config.budget
     
