@@ -400,6 +400,7 @@ def main(args):
     with open('results.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=';',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['Number of iterations'] + [options.iters]+['-']+['-']+['-']+['-'])
         spamwriter.writerow(['Agent #'] + 
             ['Agent type'] + 
             ['Average spent'] +
@@ -416,6 +417,9 @@ def main(args):
         spamwriter.writerow([n] +
             ['Seller'] +
             [0.01 * m] + [0.01 * std] + [0] + [0])
+
+        
+
 
 #print "config", config.budget
     
