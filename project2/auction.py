@@ -379,6 +379,7 @@ def main(args):
 
     # Averages are over all the value permutations considered    
     N = float(num_perms) * options.iters
+    print("Total permutations: %s") % num_perms
     logging.info("%s\t\t%s\t\t%s" % ("#" * 15, "RESULTS", "#" * 15))
     logging.info("")
     for a in range(n):
@@ -397,7 +398,7 @@ def main(args):
     logging.debug(agents_util_stats)
 
     """ Implementing output into csv """
-    with open('results.csv', 'wb') as csvfile:
+    with open('Stats/results.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=';',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Number of iterations'] + [options.iters]+['-']+['-']+['-']+['-'])
