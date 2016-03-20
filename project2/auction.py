@@ -398,10 +398,13 @@ def main(args):
     logging.debug(agents_util_stats)
 
     """ Implementing output into csv """
-    with open('Stats/results.csv', 'wb') as csvfile:
+    filename = 'Stats/bb_only_reserve' + str(options.reserve) + '_seed' + str(options.seed) + '_iters' + str(options.iters) + '.csv'
+    with open(filename, 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=';',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(['Number of iterations'] + [options.iters]+['-']+['-']+['-']+['-'])
+        spamwriter.writerow(['Number of iterations'] + [options.iters]+['']+['']+['']+[''])
+        spamwriter.writerow(['Reserve'] + [options.reserve]+['']+['']+['']+[''])
+        spamwriter.writerow(['Seed'] + [options.seed]+['']+['']+['']+[''])
         spamwriter.writerow(['Agent #'] + 
             ['Agent type'] + 
             ['Average spent'] +

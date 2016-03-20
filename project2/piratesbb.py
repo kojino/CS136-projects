@@ -108,7 +108,6 @@ class PiratesBB:
         elif j_opt == 0:
             bid = v_i
 
-        logging.info(options)
         return bid
 
     def __repr__(self):
