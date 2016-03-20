@@ -139,7 +139,7 @@ def sim(config):
         map(agent_value, slot_occupants[t], slot_clicks[t], slot_payments[t])
         
         ## Debugging. Set to True to see what's happening.
-        log_console = False
+        log_console = True
         if log_console:
             logging.info("\t=== Round %d ===" % t)
             logging.info("\tnum_slots: %d" % num_slots)
@@ -150,7 +150,7 @@ def sim(config):
             logging.info("\tslot_payments: %s" % slot_payments[t])
             logging.info("\tUtility: %s" % values[t])
             logging.info("\ttotals spent: %s" % [total_spent(a.id, t+1) for a in agents])
-            
+            logging.info("")
     
     for t in range(0, config.num_rounds):
         # Over 48 rounds, go from 80 to 20 and back to 80.  Mean 50.

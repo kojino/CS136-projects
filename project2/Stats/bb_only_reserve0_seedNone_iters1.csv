@@ -1,0 +1,10 @@
+Number of iterations;1;;;;
+Reserve;0;;;;
+Seed;;;;;
+Agent #;Agent type;Average spent;SD spent;Average Utility;SD Utility
+0;PiratesBB;21.506601562500002;0.0;3090.6933984375;0.0
+1;PiratesBB;0.0;0.0;0.0;0.0
+2;PiratesBB;2.879375;0.0;1971.680625;0.0
+3;PiratesBB;5.7448828125;0.0;917.5551171875001;0.0
+4;PiratesBB;11.884570312500001;0.0;2051.9954296875;0.0
+5;Seller;42.0154296875;0.0;0;0
