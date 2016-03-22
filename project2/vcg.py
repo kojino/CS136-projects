@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import random
+import logging
 
 from gsp import GSP
 
@@ -27,7 +28,7 @@ class VCG:
         """
 
         # The allocation is the same as GSP, so we filled that in for you...
-        
+
         valid = lambda (a, bid): bid >= reserve
         valid_bids = filter(valid, bids)
 
@@ -41,7 +42,7 @@ class VCG:
         allocated_bids = valid_bids[:num_slots]
         if len(allocated_bids) == 0:
             return ([], [])
-        
+
         (allocation, just_bids) = zip(*allocated_bids)
 
         # TODO: You just have to implement this function
@@ -52,7 +53,18 @@ class VCG:
             c = slot_clicks
             n = len(allocation)
 
-            # TODO: Compute the payment and return it.
+            all_bids = [x[1] for x in bids]   
+            all_bids = sorted(all_bids, reverse = True)
+
+            # if the agent is in the lowest allocated position
+            if k > n - 1:
+                payment = 0
+            elif k == n-1:
+                payment = max(reserve, all_bids[k+1]) * slot_clicks[k]    #/ (0.75**(k-1)) # added 0.75**(k-1)
+            else:
+                payment = ((slot_clicks[k] - slot_clicks[k+1]) * all_bids[k+1] + total_payment(k + 1))   #/(0.75**(k-1)) # added 0.75**(k-1)
+
+            return payment
 
         def norm(totals):
             """Normalize total payments by the clicks in each slot"""
@@ -60,7 +72,7 @@ class VCG:
 
         per_click_payments = norm(
             [total_payment(k) for k in range(len(allocation))])
-        
+
         return (list(allocation), per_click_payments)
 
     @staticmethod

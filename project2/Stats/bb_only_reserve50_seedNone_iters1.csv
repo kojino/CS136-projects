@@ -1,0 +1,10 @@
+Number of iterations;1;;;;
+Reserve;50;;;;
+Seed;;;;;
+Agent #;Agent type;Average spent;SD spent;Average Utility;SD Utility
+0;Truthful;3024.0;0.0;48.0;0.0
+1;Truthful;1809.0;0.0;470.34000000000003;0.0
+2;Truthful;676.0;0.0;676.0;0.0
+3;Truthful;0.0;0.0;0.0;0.0
+4;Truthful;0.0;0.0;0.0;0.0
+5;Seller;5509.0;0.0;0;0

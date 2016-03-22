@@ -16,6 +16,8 @@ import pprint
 import random
 import sys
 
+import csv
+
 from gsp import GSP
 from vcg import VCG
 from history import History
@@ -41,7 +43,6 @@ def agent_slot(occupants, a_id, t):
         return agents.index(a_id)
     else:
         return -1
-
 
 def sim(config):
     # TODO: Create agents here
@@ -138,7 +139,7 @@ def sim(config):
         map(agent_value, slot_occupants[t], slot_clicks[t], slot_payments[t])
         
         ## Debugging. Set to True to see what's happening.
-        log_console = False
+        log_console = True
         if log_console:
             logging.info("\t=== Round %d ===" % t)
             logging.info("\tnum_slots: %d" % num_slots)
@@ -149,7 +150,7 @@ def sim(config):
             logging.info("\tslot_payments: %s" % slot_payments[t])
             logging.info("\tUtility: %s" % values[t])
             logging.info("\ttotals spent: %s" % [total_spent(a.id, t+1) for a in agents])
-            
+            logging.info("")
     
     for t in range(0, config.num_rounds):
         # Over 48 rounds, go from 80 to 20 and back to 80.  Mean 50.
@@ -242,7 +243,7 @@ def parse_agents(args):
 
 def main(args):
 
-    usage_msg = "Usage:  %prog [options] PeerClass1[,cnt] PeerClass2[,cnt2] ..."
+    usage_msg = "Usage: %prog [options] PeerClass1[,cnt] PeerClass2[,cnt2] ..."
     parser = OptionParser(usage=usage_msg)
 
     def usage(msg):
@@ -329,6 +330,14 @@ def main(args):
 
     av_value=range(0,n)
     total_spent = [0 for i in range(n)]
+    
+    """ Additional statistics to follow """
+    agents_spent_stats = [] ### For spending statistics information
+    agents_util_stats = [] ### For utility statistics
+    for i in range(n):
+        agents_spent_stats.append([])
+        agents_util_stats.append([])
+    """ ------------------------------- """
 
     ##  iters = no. of samples to take
     for i in range(options.iters):
@@ -355,7 +364,13 @@ def main(args):
             for id in range(n):
                 totals[id] += stats.total_utility(id)
                 total_spent[id] += history.agents_spent[id]
+                """ Additional stats ---------------- """
+                agents_spent_stats[id].append(history.agents_spent[id])
+                agents_util_stats[id].append(stats.total_utility(id))
+                """ --------------------------------- """
+
             total_rev += stats.total_revenue()
+
         total_revenues.append(total_rev / float(num_perms))
 
     ## total_spent = total amount of money spent by agents, for all iterations, all permutations, all rounds
@@ -363,11 +378,12 @@ def main(args):
 
     # Averages are over all the value permutations considered    
     N = float(num_perms) * options.iters
+    print("Total permutations: %s") % num_perms
     logging.info("%s\t\t%s\t\t%s" % ("#" * 15, "RESULTS", "#" * 15))
     logging.info("")
     for a in range(n):
         logging.info("Stats for Agent %d, %s" % (a, agents_to_run[a]) )
-        logging.info("Average spend $%.2f (daily)" % (0.01 *total_spent[a]/N)  )   
+        logging.info("Average spend $%.2f (daily)" % (0.01 * total_spent[a]/N)) 
         logging.info("Average  utility  $%.2f (daily)" % (0.01 * totals[a]/N))
         logging.info("-" * 40)
         logging.info("\n")
@@ -375,13 +391,40 @@ def main(args):
     std = stddev(total_revenues)
     logging.warning("Average daily revenue (stddev): $%.2f ($%.2f)" % (0.01 * m, 0.01*std))
 
-#print "config", config.budget
-    
+    logging.debug("agents_spent_stats:")
+    logging.debug(agents_spent_stats)
+    logging.debug("agents_util_stats:")
+    logging.debug(agents_util_stats)
+
+    """ Implementing output into csv """
+    filename = 'Stats/bb_only_reserve' + str(options.reserve) + '_seed' + str(options.seed) + '_iters' + str(options.iters) + '.csv'
+    with open(filename, 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=';',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['Number of iterations'] + [options.iters]+['']+['']+['']+[''])
+        spamwriter.writerow(['Reserve'] + [options.reserve]+['']+['']+['']+[''])
+        spamwriter.writerow(['Seed'] + [options.seed]+['']+['']+['']+[''])
+        spamwriter.writerow(['Agent #'] + 
+            ['Agent type'] + 
+            ['Average spent'] +
+            ['SD spent'] +
+            ['Average Utility'] +
+            ['SD Utility'])
+        for a in range(n):
+            spamwriter.writerow([a] + 
+                [agents_to_run[a]] +
+                [0.01*sum(agents_spent_stats[a])/N] +
+                [0.01*stddev(agents_spent_stats[a])] +
+                [0.01*sum(agents_util_stats[a])/N] +
+                [0.01*stddev(agents_util_stats[a])/N])
+        spamwriter.writerow([n] +
+            ['Seller'] +
+            [0.01 * m] + [0.01 * std] + [0] + [0])
 
     #for t in range(47, 48):
     #for a in agents:
         #print a,"'s added values is", av_value[a.id]
-        
+    print options
 
 
 if __name__ == "__main__":
