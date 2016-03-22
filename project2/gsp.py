@@ -9,6 +9,7 @@ class GSP:
     @staticmethod
     def compute(slot_clicks, reserve, bids):
         """
+        
         Given info about the setting (clicks for each slot, and reserve price),
         and bids (list of (id, bid) tuples), compute the following:
           allocation:  list of the occupant in each slot
@@ -22,7 +23,9 @@ class GSP:
          - allocation is a list of the ids of the bidders in each slot
             (in order)
          - per_click_payments is the corresponding payments.
+        
         """
+
         valid = lambda (a, bid): bid >= reserve
         valid_bids = filter(valid, bids)
 
@@ -58,6 +61,7 @@ class GSP:
         Returns a tuple (min_bid, max_bid).
         If slot == 0, returns None for max_bid, since it's not well defined.
         """
+
         bid_amounts = [b for (_, b) in bids if b >= reserve]
         bid_amounts.sort()
         bid_amounts.reverse()

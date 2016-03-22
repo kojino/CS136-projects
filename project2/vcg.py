@@ -53,28 +53,16 @@ class VCG:
             c = slot_clicks
             n = len(allocation)
 
-            all_bids = [x[0] for x in bids]
-            all_bids.sort()    
-
-            bids_valid = [x[1] for x in valid_bids]   
-            bids_valid = sorted(bids_valid, reverse = True)  
+            all_bids = [x[1] for x in bids]   
+            all_bids = sorted(all_bids, reverse = True)
 
             # if the agent is in the lowest allocated position
-            if k > len(valid_bids) - 1:
+            if k > n - 1:
                 payment = 0
-            elif k == len(valid_bids)-1:
-                ###################################################################
-                # Here should be just reserve because we already excluded players #
-                # With less than reserve bids. So if a player is the last he will #
-                # pay the reserve price, since the next bid will strictly lower   #
-                # than the reserve                                                #
-                ###################################################################
-                payment = 0.75**(k-1) * reserve
+            elif k == n-1:
+                payment = max(reserve, all_bids[k+1]) * slot_clicks[k]    #/ (0.75**(k-1)) # added 0.75**(k-1)
             else:
-                payment = (0.75**k - 0.75**(k+1))*bids_valid[k + 1] + total_payment(k + 1)
-
-            #print "all bids: %s, bidder #: %s pays: %s" % (bids_valid, k, payment)
-            #print ""
+                payment = ((slot_clicks[k] - slot_clicks[k+1]) * all_bids[k+1] + total_payment(k + 1))   #/(0.75**(k-1)) # added 0.75**(k-1)
 
             return payment
 

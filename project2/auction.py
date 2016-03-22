@@ -383,7 +383,7 @@ def main(args):
     logging.info("")
     for a in range(n):
         logging.info("Stats for Agent %d, %s" % (a, agents_to_run[a]) )
-        logging.info("Average spend $%.2f (daily)" % (0.01 *total_spent[a]/N)  )   
+        logging.info("Average spend $%.2f (daily)" % (0.01 * total_spent[a]/N)) 
         logging.info("Average  utility  $%.2f (daily)" % (0.01 * totals[a]/N))
         logging.info("-" * 40)
         logging.info("\n")
@@ -424,7 +424,7 @@ def main(args):
     #for t in range(47, 48):
     #for a in agents:
         #print a,"'s added values is", av_value[a.id]
-        
+    print options
 
 
 if __name__ == "__main__":
